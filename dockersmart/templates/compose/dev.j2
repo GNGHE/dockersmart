@@ -1,0 +1,84 @@
+version: "3.9"
+
+services:
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    command: {{ command }}
+
+    volumes:
+      - .:/app
+
+    ports:
+      - "8000:8000"
+{% if database == "postgresql" %}
+    depends_on:
+      - postgres
+{% endif %}
+
+{% if "redis" in services %}
+    depends_on:
+      - redis
+{% endif %}
+
+
+{% if database == "postgresql" %}
+  postgres:
+    image: postgres:latest
+
+    environment:
+      POSTGRES_DB: POSTGRES_DB
+      POSTGRES_USER: POSTGRES_USER
+      POSTGRES_PASSWORD: POSTGRES_PASSWORD
+
+    ports:
+      - "5432:5432"
+{% endif %}
+
+
+{% if "redis" in services %}
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+{% endif %}
+
+
+{% if "celery" in services %}
+  celery_worker:
+    build: .
+
+    command: celery -A {{ project_name }} worker -l info
+
+    depends_on:
+      - web
+
+{% if "redis" in services %}
+      - redis
+{% endif %}
+{% endif %}
+
+
+{% if "flower" in services %}
+  flower:
+    build: .
+
+    command: celery -A {{ project_name }} flower
+
+    ports:
+      - "5555:5555"
+
+    depends_on:
+      - web
+
+{% if "redis" in services %}
+      - redis
+{% endif %}
+
+{% if "celery" in services %}
+      - celery_worker
+{% endif %}
+{% endif %}

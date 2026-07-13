@@ -1,0 +1,126 @@
+version: "3.9"
+
+services:
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    command: {{ command }}
+
+    ports:
+      - "8000:8000"
+
+{% if database == "postgresql" %}
+    depends_on:
+      - postgres
+{% endif %}
+
+{% if "redis" in services %}
+    depends_on:
+      - redis
+{% endif %}
+
+    restart: always
+
+
+# -------------------------
+# DATABASE
+# -------------------------
+
+{% if database == "postgresql" %}
+  postgres:
+    image: postgres:15-alpine
+
+    restart: always
+
+    environment:
+      POSTGRES_DB: POSTGRES_DB
+      POSTGRES_USER: POSTGRES_USER
+      POSTGRES_PASSWORD: POSTGRES_PASSWORD
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+    ports:
+      - "5432:5432"
+{% endif %}
+
+
+# -------------------------
+# REDIS
+# -------------------------
+
+{% if "redis" in services %}
+  redis:
+    image: redis:7-alpine
+
+    restart: always
+
+    ports:
+      - "6379:6379"
+{% endif %}
+
+
+# -------------------------
+# CELERY WORKER
+# -------------------------
+
+{% if "celery" in services %}
+  celery_worker:
+    build: .
+
+    command: celery -A {{ project_name }} worker -l info
+
+    restart: always
+
+    depends_on:
+      - web
+
+{% if database == "postgresql" %}
+      - postgres
+{% endif %}
+
+{% if "redis" in services %}
+      - redis
+{% endif %}
+{% endif %}
+
+
+# -------------------------
+# FLOWER (MONITORING CELERY)
+# -------------------------
+
+{% if "flower" in services %}
+  flower:
+    build: .
+
+    command: celery -A {{ project_name }} flower
+
+    ports:
+      - "5555:5555"
+
+    restart: always
+
+    depends_on:
+      - web
+
+{% if "redis" in services %}
+      - redis
+{% endif %}
+
+{% if "celery" in services %}
+      - celery_worker
+{% endif %}
+{% endif %}
+
+
+# -------------------------
+# VOLUMES
+# -------------------------
+
+{% if database == "postgresql" %}
+volumes:
+  postgres_data:
+{% endif %}

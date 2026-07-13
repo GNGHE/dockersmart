@@ -1,0 +1,38 @@
+FROM python:{{ python_version }}
+
+# -------------------------
+# ENV BASIC
+# -------------------------
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+
+WORKDIR {{ working_dir }}
+
+# -------------------------
+# SYSTEM DEPENDENCIES
+# -------------------------
+{% if system_dependencies %}
+RUN apt-get update && apt-get install -y \
+{% for dep in system_dependencies %}
+    {{ dep }} \
+{% endfor %}
+    && rm -rf /var/lib/apt/lists/*
+{% endif %}
+
+# -------------------------
+# INSTALL DEPENDENCIES (CACHE OPTIMIZED)
+# -------------------------
+COPY requirements.txt .
+
+RUN pip install --no-cache-dir --upgrade pip \
+    && pip install --no-cache-dir -r requirements.txt
+
+# -------------------------
+# COPY PROJECT
+# -------------------------
+COPY . .
+
+# -------------------------
+# DEFAULT COMMAND
+# -------------------------
+CMD {{ command }}

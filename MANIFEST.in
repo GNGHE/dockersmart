@@ -1,8 +1,0 @@
-include README.md
-
-recursive-include dockersmart/templates *.j2
-recursive-include dockersmart/templates *.yaml
-recursive-include dockersmart/templates *.yml
-recursive-include dockersmart/templates *.toml
-recursive-include dockersmart/templates *.conf
-recursive-include dockersmart/templates *.inigit add

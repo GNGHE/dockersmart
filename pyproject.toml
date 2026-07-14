@@ -20,7 +20,9 @@ authors = [
 
 [tool.setuptools.package-data]
 dockersmart = [
-    "templates/*",
+    "templates/dockerfile/*.j2",
+    "templates/compose/*.j2",
+    "templates/dockerignore/*.j2",
 ]
 
 [project.scripts]

@@ -1,2 +1,0 @@
-[console_scripts]
-dockersmart = dockersmart.cli.commands:main

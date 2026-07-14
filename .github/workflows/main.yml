@@ -1,0 +1,25 @@
+name: Publier sur PyPI
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  build-and-publish:
+    name: Construire et publier sur PyPI
+    runs-on: ubuntu-latest
+    environment: pypi
+    permissions:
+      id-token: write  # Requis pour Trusted Publishing
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+      - name: Configurer Python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1
+        with:
+          python-version: '3.x'
+      - name: Installer les outils de build
+        run: pip install build twine
+      - name: Créer le package (tar.gz et wheel)
+        run: python -m build
+      - name: Publier sur PyPI
+        uses: pypa/gh-action-pypi-publish@cef221092ed1bacb1cc03d23a2d87d1d172e277b

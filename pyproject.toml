@@ -18,6 +18,9 @@ authors = [
     { name = "Ephraim Gode" }
 ]
 
+[tool.setuptools]
+include-package-data = true
+
 [tool.setuptools.package-data]
 dockersmart = [
     "templates/dockerfile/*.j2",

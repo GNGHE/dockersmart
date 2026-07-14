@@ -18,6 +18,10 @@ authors = [
     { name = "Ephraim Gode" }
 ]
 
+[tool.setuptools.package-data]
+dockersmart = [
+    "templates/*",
+]
 
 [project.scripts]
 dockersmart = "dockersmart.cli.commands:main"

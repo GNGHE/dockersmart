@@ -7,7 +7,7 @@ on:
 jobs:
   build-and-publish:
     name: Construire et publier sur PyPI
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     environment: pypi
     permissions:
       id-token: write  # Requis pour Trusted Publishing

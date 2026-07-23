@@ -23,7 +23,7 @@ jobs:
           echo "Required pattern: $PATTERN"
           echo ""
 
-          if echo "$BRANCH" | grep -qE "release/$PATTERN"; then
+          if echo "$BRANCH" | grep -qE "$PATTERN"; then
             echo "✅ Branch name is valid: $BRANCH"
           else
             echo "❌ Branch name '$BRANCH' does not follow the branch naming convention."

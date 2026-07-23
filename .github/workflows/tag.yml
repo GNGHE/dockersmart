@@ -37,8 +37,8 @@ jobs:
           PATCH=$(echo $VERSION | cut -d. -f3)
 
           # Récupérer la branche source de la PR
-          BRANCH="${GITHUB_REF#refs/heads/}"
-
+          BRANCH="${{ github.event.pull_request.head.ref }}"
+          
           echo "Branche : $BRANCH"
 
           TYPE=$(echo "$BRANCH" | cut -d/ -f1)

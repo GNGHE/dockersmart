@@ -3,7 +3,7 @@ name: Créer un tag et mettre a jour le toml
 on:
   push:
     branches:
-      - main
+      - release/**
 
 jobs:
   tag:
@@ -34,11 +34,11 @@ jobs:
           PATCH=$(echo $VERSION | cut -d. -f3)
 
           # Récupérer la branche source de la PR
-          BRANCH="${{ github.event.workflow_run.head_branch }}"
+          BRANCH="${GITHUB_REF#refs/heads/}"
 
           echo "Branche : $BRANCH"
 
-          TYPE=$(echo "$BRANCH" | cut -d/ -f1)
+          TYPE=$(echo "$BRANCH" | cut -d/ -f2)
 
           case $TYPE in
             breaking)

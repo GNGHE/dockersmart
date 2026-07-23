@@ -1,14 +1,18 @@
 name: Creer la release
 
 on:
-  push:
-    tags:
-      - 'v*' # Déclenchement sur les tags v1.0.0, v2.0, etc.
+  workflow_run:
+    workflows:
+      - Créer un tag
+    types:
+      - completed
+
 
 permissions:
   contents: write
 jobs:
-  version:
+  change_version:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     name: Modifier la version du package
     runs-on: ubuntu-24.04
     steps:
@@ -23,7 +27,8 @@ jobs:
             Author  : ${{github.actor}}
             Message : Mis à jour de la version"
             git push
-  release:
+  create_release:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     name: Creer la release
     runs-on: ubuntu-24.04
     permissions:

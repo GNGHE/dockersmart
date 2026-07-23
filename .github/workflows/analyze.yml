@@ -1,4 +1,4 @@
-name: Analyser le package
+name: Tester le package
 
 on:
   push:

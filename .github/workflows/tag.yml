@@ -68,8 +68,6 @@ jobs:
               exit 0
           fi
 
-          git tag "$NEW_TAG"
-          git push origin "$NEW_TAG"
 
           echo "✅ Tag $NEW_TAG créé avec succès"
           git tag "$NEW_TAG"

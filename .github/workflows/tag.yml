@@ -63,7 +63,7 @@ jobs:
           NEW_TAG="v$MAJOR.$MINOR.$PATCH"
 
           echo "Nouveau tag : $NEW_TAG"
-          if git rev-parse "$NEW_TAG" >/dev/null 2>&1; then
+          if git rev-parse -q --verify "refs/tags/$NEW_TAG" >/dev/null 2>&1; then
               echo "⚠️ Le tag $NEW_TAG existe déjà, on ignore."
               exit 0
           fi

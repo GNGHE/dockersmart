@@ -1,5 +1,3 @@
-Voici une version plus professionnelle, plus naturelle et moins "marketing automatique". J'ai réduit les emojis, ajouté plus d'explications, et rendu la documentation plus adaptée à un projet open-source.
-
 ````markdown
 # Dockersmart
 

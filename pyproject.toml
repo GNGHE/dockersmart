@@ -1,7 +1,8 @@
+version = "$TAG"
+
 [build-system]
 requires = ["setuptools>=68", "wheel"]
 build-backend = "setuptools.build_meta"
-
 
 [project]
 name = "dockersmart"
@@ -9,25 +10,14 @@ version = "0.1.1"
 description = "AI-powered Docker generator for Django projects"
 readme = "README.md"
 requires-python = ">=3.9"
-dependencies = [
-    "jinja2",
-    "rich",
-    "pyyaml"
-]
+dependencies = ["jinja2", "rich", "pyyaml"]
+authors = [{ name = "Ephraim Gode" }]
 
-authors = [
-    { name = "Ephraim Gode" }
-]
+[project.scripts]
+dockersmart = "dockersmart.cli.commands:main"
 
 [tool.setuptools]
 include-package-data = true
 
 [tool.setuptools.package-data]
-dockersmart = [
-    "templates/dockerfile/*.j2",
-    "templates/compose/*.j2",
-    "templates/dockerignore/*.j2",
-]
-
-[project.scripts]
-dockersmart = "dockersmart.cli.commands:main"
+dockersmart = ["templates/dockerfile/*.j2", "templates/compose/*.j2", "templates/dockerignore/*.j2"]

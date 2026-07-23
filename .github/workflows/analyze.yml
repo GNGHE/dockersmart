@@ -1,0 +1,47 @@
+name: Analyser le package
+
+on:
+  workflow_run:
+    workflows: ["PR Checks"]
+    types:
+      - completed
+
+jobs:
+  doctor:
+    name: 'Lancer la commande doctor'
+    if: github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+
+      - name: Recuperer la version and creer tag
+        run: |
+            # Récupérer le dernier tag
+            git fetch --tags
+
+            LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
+
+            echo "Dernier tag : $LAST_TAG"
+
+            # Enlever le v
+            VERSION=${LAST_TAG#v}
+
+            MAJOR=$(echo $VERSION | cut -d. -f1)
+
+            BRANCH="${{ github.event.workflow_run.head_branch }}"
+            TYPE=$(echo "$BRANCH" | cut -d/ -f1)
+
+            if [ "$TYPE" = "breaking" ]; then
+                echo "ok"
+            else
+             exit 1;
+            fi
+      - name: Installer le package
+        run: |
+            pip install -e .
+      - name: Analyser le package
+        run: |
+            dockersmart doctor

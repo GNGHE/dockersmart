@@ -1,0 +1,66 @@
+name: Créer un tag et mettre a jour le toml
+
+on:
+  workflow_run:
+    workflows: ["PR Checks"]
+    types:
+      - completed
+
+jobs:
+  tag:
+    if: github.event.workflow_run.conclusion == 'success'
+    name: Créer un tag
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+
+      - name: Recuperer la version and creer tag
+        run: |
+          # Récupérer le dernier tag
+          git fetch --tags
+
+          LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
+
+          echo "Dernier tag : $LAST_TAG"
+
+          # Enlever le v
+          VERSION=${LAST_TAG#v}
+
+          MAJOR=$(echo $VERSION | cut -d. -f1)
+          MINOR=$(echo $VERSION | cut -d. -f2)
+          PATCH=$(echo $VERSION | cut -d. -f3)
+
+          # Récupérer la branche source de la PR
+          BRANCH="${{ github.event.workflow_run.head_branch }}"
+
+          echo "Branche : $BRANCH"
+
+          TYPE=$(echo "$BRANCH" | cut -d/ -f1)
+
+          case $TYPE in
+            breaking)
+              MAJOR=$((MAJOR + 1))
+              MINOR=0
+              PATCH=0
+              ;;
+
+            feature)
+              MINOR=$((MINOR + 1))
+              PATCH=0
+              ;;
+
+            *)
+              PATCH=$((PATCH + 1))
+              ;;
+          esac
+
+          NEW_TAG="v$MAJOR.$MINOR.$PATCH"
+
+          echo "Nouveau tag : $NEW_TAG"
+
+          git tag "$NEW_TAG"
+          git push origin "$NEW_TAG"

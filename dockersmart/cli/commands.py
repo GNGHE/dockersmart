@@ -12,6 +12,12 @@ from dockersmart.generators.compose_generator import ComposeGenerator
 from dockersmart.generators.dockerignore_generator import DockerignoreGenerator
 from dockersmart.generators.env_generator import EnvGenerator
 
+from dockersmart.doctor.doctor import Doctor
+from dockersmart.validate.validate import Validate
+from dockersmart.clean.clean import Clean
+from dockersmart.help.help import Help
+from dockersmart.version.version import Version
+
 
 BASE_DIR = Path(__file__).resolve().parents[1]
 console = Console()
@@ -23,14 +29,49 @@ class CLI:
 
         parser = argparse.ArgumentParser(description="Dockersmart CLI")
 
-        parser.add_argument("command")
-        parser.add_argument("mode")
+
+        parser.add_argument("command", choices=["init", "doctor", "clean", "version", "validate", "help"])
+
+        parser.add_argument("mode", nargs="?", choices=["dev", "prod"])
 
         parser.add_argument("--verbose", action="store_true")
         parser.add_argument("--dry-run", action="store_true")
         parser.add_argument("--debug", action="store_true")
 
         args = parser.parse_args()
+        
+        
+        # -------------------------
+        # DOCTOR
+        # -------------------------
+        if args.command == "doctor":
+            Doctor(".").run()
+            return
+        
+        
+        if args.command == "doctor":
+            Doctor(".").run()
+            return
+
+
+        if args.command == "clean":
+            Clean(".").run()
+            return
+
+
+        if args.command == "version":
+            Version().run()
+            return
+
+
+        if args.command == "validate":
+            Validate(".").run()
+            return
+
+
+        if args.command == "help":
+            Help().run()
+            return
 
         # -------------------------
         # VALIDATION

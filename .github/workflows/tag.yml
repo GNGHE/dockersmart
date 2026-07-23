@@ -37,8 +37,8 @@ jobs:
           PATCH=$(echo $VERSION | cut -d. -f3)
 
           # Récupérer la branche source de la PR
-          BRANCH="${GITHUB_REF#refs/heads/}"
-
+          BRANCH="${{ github.event.pull_request.head.ref }}"
+          
           echo "Branche : $BRANCH"
 
           TYPE=$(echo "$BRANCH" | cut -d/ -f1)
@@ -63,7 +63,7 @@ jobs:
           NEW_TAG="v$MAJOR.$MINOR.$PATCH"
 
           echo "Nouveau tag : $NEW_TAG"
-          if git rev-parse "$NEW_TAG" >/dev/null 2>&1; then
+          if git rev-parse -q --verify "refs/tags/$NEW_TAG" >/dev/null 2>&1; then
               echo "⚠️ Le tag $NEW_TAG existe déjà, on ignore."
               exit 0
           fi

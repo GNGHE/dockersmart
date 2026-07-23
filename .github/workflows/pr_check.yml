@@ -1,0 +1,51 @@
+name: PR Checks
+
+on:
+  pull_request:
+    branches: [master]
+    types: [opened, reopened, synchronize, edited]
+
+jobs:
+  branch-name:
+    name: Valider le nom de la branche
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    steps:
+      - name: Verifier le nom de la branche
+        env:
+          BRANCH: ${{ github.head_ref }}
+
+        run: |
+          PATTERN='^(breaking|feature|fix|docs|refactor|test|style|chore)/[a-z0-9-]+$'
+
+          echo "Branch: $BRANCH"
+          echo "Required pattern: $PATTERN"
+          echo ""
+
+          if echo "$BRANCH" | grep -qE "$PATTERN"; then
+            echo "✅ Branch name is valid: $BRANCH"
+          else
+            echo "❌ Branch name '$BRANCH' does not follow the branch naming convention."
+            echo ""
+            echo "Required format: <type>/<slug>"
+            echo ""
+            echo "Allowed types:"
+            echo "  breaking  → MAJOR version (x.0.0)"
+            echo "  feature   → MINOR version (0.x.0)"
+            echo "  fix       → PATCH version (0.0.x)"
+            echo "  docs      → no version change but for update on pypi → PATCH version (0.0.x)"
+            echo "  refactor  → no version change but for update on pypi → PATCH version (0.0.x)"
+            echo "  test      → no version change but for update on pypi → PATCH version (0.0.x)"
+            echo "  style     → no version change but for update on pypi → PATCH version (0.0.x)"
+            echo "  chore     → no version change but for update on pypi → PATCH version (0.0.x)"
+            echo ""
+            echo "Slug rules:"
+            echo "  lowercase letters, digits, and hyphens only"
+            echo ""
+            echo "Example:"
+            echo "  breaking/remove-old-api"
+            echo "  feature/add-login"
+            echo "  fix/login-error"
+            exit 1
+          fi

@@ -24,7 +24,7 @@ jobs:
             TAG=$(git describe --tags --abbrev=0)
             git config user.name "gitops"
             git config user.email "gitops@gitops.com"
-            yq eval -i '.version = "$TAG"' pyproject.toml
+            yq eval -i '.project.version = "$TAG"' pyproject.toml
             git add pyproject.toml
             git commit -m "Updating version for this package:
             Branch  : ${{ github.event.workflow_run.head_branch }}

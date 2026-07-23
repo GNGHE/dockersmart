@@ -1,14 +1,12 @@
 name: Créer un tag et mettre a jour le toml
 
 on:
-  workflow_run:
-    workflows: ["PR Checks"]
-    types:
-      - completed
+  push:
+    branches:
+      - main
 
 jobs:
   tag:
-    if: github.event.workflow_run.conclusion == 'success'
     name: Créer un tag
     runs-on: ubuntu-24.04
     permissions:
@@ -17,7 +15,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
-
+        with:
+          fetch-depth: 0
       - name: Recuperer la version and creer tag
         run: |
           # Récupérer le dernier tag

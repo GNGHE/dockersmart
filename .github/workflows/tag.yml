@@ -38,7 +38,7 @@ jobs:
 
           echo "Branche : $BRANCH"
 
-          TYPE=$(echo "$BRANCH" | cut -d/ -f1)
+          TYPE=$(echo "$BRANCH" | cut -d/ -f2)
 
           case $TYPE in
             breaking)

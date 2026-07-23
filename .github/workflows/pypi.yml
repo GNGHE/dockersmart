@@ -1,8 +1,12 @@
 name: Publier sur PyPI
 
 on:
-  release:
-    types: [published]
+  workflow_run:
+    workflows:
+      - Creer la release
+    types:
+      - completed
+
 
 jobs:
   build-and-publish:

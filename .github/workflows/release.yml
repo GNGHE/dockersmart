@@ -1,9 +1,12 @@
 name: Creer la release
 
 on:
-  push:
-    tags:
-      - 'v*' # Déclenchement sur les tags v1.0.0, v2.0, etc.
+  workflow_run:
+    workflows:
+      - Créer un tag
+    types:
+      - completed
+
 
 permissions:
   contents: write

@@ -1,12 +1,15 @@
-name: Créer un tag et mettre a jour le toml
+name: Créer un tag
 
 on:
-  push:
+  pull_request:
     branches:
       - master
+    types:
+      - closed
 
 jobs:
   tag:
+    if: github.event.pull_request.merged == true
     name: Créer un tag
     runs-on: ubuntu-24.04
     permissions:
@@ -60,6 +63,14 @@ jobs:
           NEW_TAG="v$MAJOR.$MINOR.$PATCH"
 
           echo "Nouveau tag : $NEW_TAG"
+          if git rev-parse "$NEW_TAG" >/dev/null 2>&1; then
+              echo "⚠️ Le tag $NEW_TAG existe déjà, on ignore."
+              exit 0
+          fi
 
+          git tag "$NEW_TAG"
+          git push origin "$NEW_TAG"
+
+          echo "✅ Tag $NEW_TAG créé avec succès"
           git tag "$NEW_TAG"
           git push origin "$NEW_TAG"
